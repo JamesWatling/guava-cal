@@ -17,12 +17,37 @@ var CLASSES = [
 var CalendarDate = React.createClass({
     render () {
         curDate = moment();
+
         daysInMonth = curDate.endOf('month').date();
-        startOfMonth = moment(curDate.format("MMMM"), "MMMM").format();
+        daysInLastMonth = moment().endOf('month').subtract(1, 'month').date();
+
+        lastMonthEndDay = moment().endOf('month').subtract(1, 'month').day();
+        startDay = moment(curDate.format("MMMM"), "MMMM").day();
+        calendarDay = parseInt(this.props.date);
+        lastMonth = calendarDay <= parseInt(startDay);
+
+        index = this.props.date; //TODO rename index from props
+        dayDiff = daysInLastMonth - index;
+        indexOfLastMonthEnd = startDay + 1;
+        nextMonth = index - indexOfLastMonthEnd + 1 > daysInMonth;
+        curDateClass = (lastMonth || nextMonth) ? 'nil' : '';
+
+
+        if(lastMonth){
+            displayDate = daysInLastMonth - indexOfLastMonthEnd + index + 1;
+        }
+        else if(nextMonth){
+            displayDate = index - (daysInLastMonth + indexOfLastMonthEnd);
+        }
+        else {
+            console.log("calc: ", index - indexOfLastMonthEnd + 1);
+            displayDate = index - indexOfLastMonthEnd + 1;
+        }
+
         return(
-            <td>
-                {this.props.date}
+            <td className={curDateClass}>
                 <div className="calendar--day__events">
+                {displayDate}
                 </div>
             </td>
         )
@@ -84,10 +109,8 @@ var Calendar = React.createClass({
         var month = WEEKS.map((week) => <tr> {week} </tr>);
         return(
           <div className="container">
-            <div id="classes">
-            </div>
             <div id="cal">
-                <Header month={this.props.month} />
+              <Header month={this.props.month} />
               <div id="calframe">
                 <table className="curr">
                   <tbody id='calendar-body'>
@@ -105,20 +128,27 @@ var Calendar = React.createClass({
     }
 });
 
-
-var classes = React.createClass({
+var Classes = React.createClass({
     render () {
-        var classes = CLASSES.map((event) => <li>{event.name} ({event.time})</li>);
+        var classes = CLASSES.map((event) => <li key={event.id}>{event.name} ({event.time})</li>);
         return(
             <div>
                 <h1>Classes</h1>
-                <ul>
-                    {classes}
-                </ul>
+                <ul>{classes}</ul>
             </div>
         )
     }
 });
 
-React.render(React.createElement(classes), document.getElementById('events'));
-React.render(<Calendar month={moment().format("MMM YYYY")} />, document.getElementById('calendar'));
+var App = React.createClass({
+    render () {
+        return(
+              <div>
+                <Calendar month={moment().format("MMM YYYY")} />
+                <Classes />
+              </div>
+        )
+    }
+});
+
+React.render(<App />, document.body);
