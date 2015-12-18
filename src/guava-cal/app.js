@@ -17,17 +17,18 @@ var CLASSES = [
 
 var CalendarDate = React.createClass({
     render () {
-        curDate = moment();
+        curMonth = moment(this.props.month, "MMM YYYY").format()
+        curDate = moment(curMonth);
+        index = this.props.date;
 
         daysInCurrentMonth = curDate.endOf('month').date();
-        daysInLastMonth = moment().subtract(1, 'month').endOf('month').date();
-        dayLastMonthEnds = moment().subtract(1, 'month').endOf('month').day();
+        daysInLastMonth = moment(curMonth).subtract(1, 'month').endOf('month').date();
+        dayLastMonthEnds = moment(curMonth).subtract(1, 'month').endOf('month').day();
         dayCurrentMonthStarts = moment(curDate.format("MMMM"), "MMMM").day();
         dayCurrentMonthEnds = moment(curDate.format("MMMM"), "MMMM").endOf('month').date();
         calendarDay = parseInt(this.props.date);
         inLastMonth = calendarDay <= parseInt(dayCurrentMonthStarts);
 
-        index = this.props.date; //TODO rename index from props
         dayDiff = daysInLastMonth - index;
         indexOfLastMonthEnd = dayCurrentMonthStarts + 1;
         inNextMonth = index - indexOfLastMonthEnd + 1 > daysInCurrentMonth;
@@ -45,10 +46,8 @@ var CalendarDate = React.createClass({
         }
         var events = CLASSES.map((event) => <Event name={event.name}/>)
         var events = CLASSES.filter((classes) => {
-            return moment(classes.date).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
+            return moment(classes.date).format("YYYY-MM-DD") === moment(moment(moment(curMonth).format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
         }).map((event) => <Event time={event.time} name={event.name}/>);
-
-        var month = WEEKS.map((week) => <tr> {week} </tr>);
 
         return(
             <td className={curDateClass}>
@@ -72,14 +71,6 @@ var Event = React.createClass({
     }
 });
 
-var DAYS = [];
-for (i=1; i<=42; i++){
-    DAYS.push(<CalendarDate date={i}/>);
-}
-var WEEKS= [];
-for (i=0; i<6; i++){
-    WEEKS[i] = DAYS.splice(0,7);
-}
 var Header = React.createClass({
 
     getInitialState: function() {
@@ -123,7 +114,16 @@ var Header = React.createClass({
 
 
 var Calendar = React.createClass({
+
     render () {
+        var DAYS = [];
+        for (i=1; i<=42; i++){
+            DAYS.push(<CalendarDate date={i} month={this.props.month}/>);
+        }
+        var WEEKS= [];
+        for (i=0; i<6; i++){
+            WEEKS[i] = DAYS.splice(0,7);
+        }
         var month = WEEKS.map((week) => <tr> {week} </tr>);
         return(
           <div className="container">
@@ -159,10 +159,13 @@ var Classes = React.createClass({
 });
 
 var App = React.createClass({
+    getDefaultProps: function() {
+        return { month: "Feb 2016" };
+    },
     render () {
         return(
               <div>
-                <Calendar month={moment().format("MMM YYYY")} />
+                <Calendar month={moment(this.props.month).format("MMM YYYY")} />
                 <Classes />
               </div>
         )
