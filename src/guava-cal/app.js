@@ -9,10 +9,10 @@ var BOOKINGS = [
 ];
 
 var CLASSES = [
-    { id: 1, name: "Open Gym", time: '2015-12-12'},
-    { id: 5, name: "Cross Fit", time: '2015-12-13'},
-    { id: 9, name: "Cross Fit (Extreme)", time: '2015-12-13'},
-    { id: 6, name: "Spin Class", time: '2015-12-14'}
+    { id: 1, name: "Open Gym", date: '2015-12-12', time: '09:00'},
+    { id: 5, name: "Cross Fit", date: '2015-12-13', time: '11:15'},
+    { id: 9, name: "Cross Fit (Extreme)", date: '2015-12-13', time: '15:35'},
+    { id: 6, name: "Spin Class", date: '2015-12-14', time: '17:00'}
 ];
 
 var CalendarDate = React.createClass({
@@ -45,8 +45,8 @@ var CalendarDate = React.createClass({
         }
         var events = CLASSES.map((event) => <Event name={event.name}/>)
         var events = CLASSES.filter((classes) => {
-            return moment(classes.time).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
-        }).map((event) => <Event name={event.name}/>);
+            return moment(classes.date).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
+        }).map((event) => <Event time={event.time} name={event.name}/>);
 
         var month = WEEKS.map((week) => <tr> {week} </tr>);
 
@@ -65,6 +65,7 @@ var Event = React.createClass({
     render () {
         return(
             <div>
+                <span className="time">{this.props.time}</span>
                 {this.props.name}
             </div>
         )

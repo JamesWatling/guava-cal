@@ -11,6 +11,11 @@ body {
     display:table;
 }
 
+#cal .time {
+    font-weight: bold;
+    padding-right: 5px;
+}
+
 #cal .header {
     cursor:default;
     background: #cd310d;
@@ -73,7 +78,7 @@ body {
 }
 #cal td {
     color:#2b2b2b;
-    width:130px;
+    width:200px;
     padding-left: 10px;
     #height:130px;
     line-height:30px;
