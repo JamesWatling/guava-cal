@@ -42,13 +42,18 @@ var CalendarDate = React.createClass({
         else {
             displayDate = index - indexOfLastMonthEnd + 1;
         }
+        var events = CLASSES.map((event) => <Event name={event.name}/>)
+        var events = CLASSES.filter((classes) => {
+            return moment(classes.time).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + index)).format("YYYY-MM-DD");
+        }).map((event) => <Event name={event.name}/>);
+
+        var month = WEEKS.map((week) => <tr> {week} </tr>);
 
         return(
             <td className={curDateClass}>
                 <div className="calendar--day__events">
                 {displayDate}
-                 <Event name="James" />
-                 <Event name="Justin" />
+                {events}
                 </div>
             </td>
         )
