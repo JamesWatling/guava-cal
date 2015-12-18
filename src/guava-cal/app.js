@@ -18,29 +18,28 @@ var CalendarDate = React.createClass({
     render () {
         curDate = moment();
 
-        daysInMonth = curDate.endOf('month').date();
-        daysInLastMonth = moment().endOf('month').subtract(1, 'month').date();
-
-        lastMonthEndDay = moment().endOf('month').subtract(1, 'month').day();
-        startDay = moment(curDate.format("MMMM"), "MMMM").day();
+        daysInCurrentMonth = curDate.endOf('month').date();
+        daysInLastMonth = moment().subtract(1, 'month').endOf('month').date();
+        dayLastMonthEnds = moment().subtract(1, 'month').endOf('month').day();
+        dayCurrentMonthStarts = moment(curDate.format("MMMM"), "MMMM").day();
+        dayCurrentMonthEnds = moment(curDate.format("MMMM"), "MMMM").endOf('month').date();
         calendarDay = parseInt(this.props.date);
-        lastMonth = calendarDay <= parseInt(startDay);
+        inLastMonth = calendarDay <= parseInt(dayCurrentMonthStarts);
 
         index = this.props.date; //TODO rename index from props
         dayDiff = daysInLastMonth - index;
-        indexOfLastMonthEnd = startDay + 1;
-        nextMonth = index - indexOfLastMonthEnd + 1 > daysInMonth;
-        curDateClass = (lastMonth || nextMonth) ? 'nil' : '';
+        indexOfLastMonthEnd = dayCurrentMonthStarts + 1;
+        inNextMonth = index - indexOfLastMonthEnd + 1 > daysInCurrentMonth;
+        curDateClass = (inLastMonth || inNextMonth) ? 'nil' : '';
 
 
-        if(lastMonth){
+        if(inLastMonth){
             displayDate = daysInLastMonth - indexOfLastMonthEnd + index + 1;
         }
-        else if(nextMonth){
-            displayDate = index - (daysInLastMonth + indexOfLastMonthEnd);
+        else if(inNextMonth){
+            displayDate = Math.abs(dayCurrentMonthEnds - index) - indexOfLastMonthEnd +1;
         }
         else {
-            console.log("calc: ", index - indexOfLastMonthEnd + 1);
             displayDate = index - indexOfLastMonthEnd + 1;
         }
 
@@ -48,18 +47,30 @@ var CalendarDate = React.createClass({
             <td className={curDateClass}>
                 <div className="calendar--day__events">
                 {displayDate}
+                 <Event name="James" />
+                 <Event name="Justin" />
                 </div>
             </td>
         )
     }
 });
 
+var Event = React.createClass({
+    render () {
+        return(
+            <div>
+                {this.props.name}
+            </div>
+        )
+    }
+});
+
 var DAYS = [];
-for (i=1; i<=35; i++){
+for (i=1; i<=42; i++){
     DAYS.push(<CalendarDate date={i}/>);
 }
 var WEEKS= [];
-for (i=0; i<5; i++){
+for (i=0; i<6; i++){
     WEEKS[i] = DAYS.splice(0,7);
 }
 var Header = React.createClass({
