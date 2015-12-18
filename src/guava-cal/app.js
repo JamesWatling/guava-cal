@@ -11,6 +11,7 @@ var BOOKINGS = [
 var CLASSES = [
     { id: 1, name: "Open Gym", time: '2015-12-12'},
     { id: 5, name: "Cross Fit", time: '2015-12-13'},
+    { id: 9, name: "Cross Fit (Extreme)", time: '2015-12-13'},
     { id: 6, name: "Spin Class", time: '2015-12-14'}
 ];
 
@@ -44,7 +45,7 @@ var CalendarDate = React.createClass({
         }
         var events = CLASSES.map((event) => <Event name={event.name}/>)
         var events = CLASSES.filter((classes) => {
-            return moment(classes.time).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + index)).format("YYYY-MM-DD");
+            return moment(classes.time).format("YYYY-MM-DD") === moment(moment(moment().format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
         }).map((event) => <Event name={event.name}/>);
 
         var month = WEEKS.map((week) => <tr> {week} </tr>);
