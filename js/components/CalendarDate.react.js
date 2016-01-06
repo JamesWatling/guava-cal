@@ -1,6 +1,7 @@
 var React = require('react');
 var moment = require('moment');
 var Event = require('../components/Event.react');
+var CalendarStore = require('../stores/CalendarStore');
 //var TodoStore = require('../stores/TodoStore');
 
 var CLASSES = [
@@ -10,18 +11,37 @@ var CLASSES = [
     { id: 6, name: "Spin Class", date: '2016-01-14', time: '17:00'}
 ]
 
+function getCurrentMonth() {
+    return CalendarStore.currentMonth()
+}
+
 var CalendarDate = React.createClass({
+    componentDidMount: function() {
+        CalendarStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function() {
+        CalendarStore.removeChangeListener(this._onChange);
+    },
+    _onChange: function() {
+        this.setState({month: getCurrentMonth()});
+    },
+    getInitialState: function() {
+        return {
+            month: getCurrentMonth()
+        }
+    },
 
     render: function() {
-        curMonth = moment(this.props.month, "MMM YYYY").format()
+        curMonth = moment(this.state.month, "MMM YYYY").format()
         curDate = moment(curMonth);
         index = this.props.date;
 
         daysInCurrentMonth = curDate.endOf('month').date();
         daysInLastMonth = moment(curMonth).subtract(1, 'month').endOf('month').date();
         dayLastMonthEnds = moment(curMonth).subtract(1, 'month').endOf('month').day();
-        dayCurrentMonthStarts = moment(curDate.format("MMMM"), "MMMM").day();
-        dayCurrentMonthEnds = moment(curDate.format("MMMM"), "MMMM").endOf('month').date();
+        dayCurrentMonthStarts = moment(curDate.format("MMMM YY"), "MMMM YY").day();
+        dayCurrentMonthEnds = moment(curDate.format("MMMM YY"), "MMMM YY").endOf('month').date();
         calendarDay = parseInt(this.props.date);
         inLastMonth = calendarDay <= parseInt(dayCurrentMonthStarts);
 
@@ -29,7 +49,6 @@ var CalendarDate = React.createClass({
         indexOfLastMonthEnd = dayCurrentMonthStarts + 1;
         inNextMonth = index - indexOfLastMonthEnd + 1 > daysInCurrentMonth;
         curDateClass = (inLastMonth || inNextMonth) ? 'nil' : '';
-
 
         if(inLastMonth){
             displayDate = daysInLastMonth - indexOfLastMonthEnd + index + 1;
@@ -43,15 +62,15 @@ var CalendarDate = React.createClass({
 
         var events = CLASSES.filter((classes) => {
             return moment(classes.date).format("YYYY-MM-DD") === moment(moment(moment(curMonth).format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
-        }).map((event) => <Event time={event.time} name={event.name}/>);
+        }).map((event) => <Event time={event.time} name={event.name} id={event.id}/>);
 
         return(
-                <td className={curDateClass}>
-                <div className="calendar--day__events">
-                {displayDate}
+            <td className={curDateClass}>
+            <div className="calendar--day__events">
+            {displayDate}
             {events}
             </div>
-                </td>
+            </td>
         );
     }
 });
