@@ -40,8 +40,8 @@ var CalendarDate = React.createClass({
         daysInCurrentMonth = curDate.endOf('month').date();
         daysInLastMonth = moment(curMonth).subtract(1, 'month').endOf('month').date();
         dayLastMonthEnds = moment(curMonth).subtract(1, 'month').endOf('month').day();
-        dayCurrentMonthStarts = moment(curDate.format("MMMM"), "MMMM").day();
-        dayCurrentMonthEnds = moment(curDate.format("MMMM"), "MMMM").endOf('month').date();
+        dayCurrentMonthStarts = moment(curDate.format("MMMM YY"), "MMMM YY").day();
+        dayCurrentMonthEnds = moment(curDate.format("MMMM YY"), "MMMM YY").endOf('month').date();
         calendarDay = parseInt(this.props.date);
         inLastMonth = calendarDay <= parseInt(dayCurrentMonthStarts);
 

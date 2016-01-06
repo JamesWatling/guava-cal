@@ -27,20 +27,18 @@ var Calendar = React.createClass({
         var month = WEEKS.map((week) => <tr> {week} </tr>);
         return(
                 <div className="container">
-                <div id="cal">
-                <Header month={getCurrentMonth().month} />
-                <div id="calframe">
-                <table className="curr">
-                <tbody id='calendar-body'>
-                <table>
-                <tr>
-                {month}
-            </tr>
-                </table>
-                </tbody>
-                </table>
-                </div>
-                </div>
+                  <div id="cal">
+                    <Header month={getCurrentMonth().month} />
+                    <div id="calframe">
+                      <table className="curr">
+                        <tbody id='calendar-body'>
+                          <tr>
+                            {month}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
         );
     },

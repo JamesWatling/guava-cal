@@ -17,8 +17,8 @@ function changeMonth (month, direction) {
   else {
       curDate = curDate.subtract(1, 'month');
   }
-    console.log(data);
   data.month = curDate.format("MMM YYYY");
+    console.log(data);
 }
 
 var CalendarStore = assign({}, EventEmitter.prototype, {
@@ -26,7 +26,6 @@ var CalendarStore = assign({}, EventEmitter.prototype, {
     currentMonth: function () {
         return data.month;
     },
-
 
     emitChange: function() {
         this.emit(CHANGE_EVENT);
