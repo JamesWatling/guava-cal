@@ -1,6 +1,7 @@
 var React = require('react');
 var moment = require('moment');
 var Event = require('../components/Event.react');
+var CalendarStore = require('../stores/CalendarStore');
 //var TodoStore = require('../stores/TodoStore');
 
 var CLASSES = [
@@ -30,7 +31,6 @@ var CalendarDate = React.createClass({
         inNextMonth = index - indexOfLastMonthEnd + 1 > daysInCurrentMonth;
         curDateClass = (inLastMonth || inNextMonth) ? 'nil' : '';
 
-
         if(inLastMonth){
             displayDate = daysInLastMonth - indexOfLastMonthEnd + index + 1;
         }
@@ -43,15 +43,15 @@ var CalendarDate = React.createClass({
 
         var events = CLASSES.filter((classes) => {
             return moment(classes.date).format("YYYY-MM-DD") === moment(moment(moment(curMonth).format("YYYY-M") + "-" + (index - indexOfLastMonthEnd + 1 ))).format("YYYY-MM-DD");
-        }).map((event) => <Event time={event.time} name={event.name}/>);
+        }).map((event) => <Event time={event.time} name={event.name} id={event.id}/>);
 
         return(
-                <td className={curDateClass}>
-                <div className="calendar--day__events">
-                {displayDate}
+            <td className={curDateClass}>
+            <div className="calendar--day__events">
+            {displayDate}
             {events}
             </div>
-                </td>
+            </td>
         );
     }
 });

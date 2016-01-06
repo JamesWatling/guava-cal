@@ -6,7 +6,7 @@ var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 
 // Remove after refactoring
-var _todos = {};
+var _classes = {};
 
 /**
  * Create a TODO item.
@@ -17,11 +17,15 @@ function create(text) {
   // server-side storage.
   // Using the current timestamp + random number in place of a real id.
   var id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
-  _todos[id] = {
+  _classes[id] = {
     id: id,
     complete: false,
     text: text
   };
+}
+
+function classClicked(id) {
+  console.log(id)
 }
 
 /**
@@ -31,7 +35,7 @@ function create(text) {
  *     updated.
  */
 function update(id, updates) {
-  _todos[id] = assign({}, _todos[id], updates);
+  _classes[id] = assign({}, _classes[id], updates);
 }
 
 /**
@@ -40,7 +44,7 @@ function update(id, updates) {
  *     updated.
  */
 function updateAll(updates) {
-  for (var id in _todos) {
+  for (var id in _classes) {
     update(id, updates);
   }
 }
@@ -50,15 +54,15 @@ function updateAll(updates) {
  * @param  {string} id
  */
 function destroy(id) {
-  delete _todos[id];
+  delete _classes[id];
 }
 
 /**
  * Delete all the completed TODO items.
  */
 function destroyCompleted() {
-  for (var id in _todos) {
-    if (_todos[id].complete) {
+  for (var id in _classes) {
+    if (_classes[id].complete) {
       destroy(id);
     }
   }
@@ -71,8 +75,8 @@ var ClassStore = assign({}, EventEmitter.prototype, {
    * @return {boolean}
    */
   areAllComplete: function() {
-    for (var id in _todos) {
-      if (!_todos[id].complete) {
+    for (var id in _classes) {
+      if (!_classes[id].complete) {
         return false;
       }
     }
@@ -84,7 +88,7 @@ var ClassStore = assign({}, EventEmitter.prototype, {
    * @return {object}
    */
   getAll: function() {
-    return _todos;
+    return _classes;
   },
 
   emitChange: function() {
@@ -111,47 +115,22 @@ AppDispatcher.register(function(action) {
   var text;
 
   switch(action.actionType) {
-    case ClassConstants.TODO_CREATE:
+    case ClassConstants.CLASS_CREATE:
       text = action.text.trim();
       if (text !== '') {
         create(text);
         ClassStore.emitChange();
       }
       break;
-
-    case ClassConstants.TODO_TOGGLE_COMPLETE_ALL:
-      if (ClassStore.areAllComplete()) {
-        updateAll({complete: false});
-      } else {
-        updateAll({complete: true});
-      }
+    case ClassConstants.CLASS_CLICK:
+      classClicked(action);
       ClassStore.emitChange();
       break;
-
-    case ClassConstants.TODO_UNDO_COMPLETE:
-      update(action.id, {complete: false});
+    case ClassConstants.CLASS_DESTROY:
+      destroyCompleted();
       ClassStore.emitChange();
       break;
-
-    case ClassConstants.TODO_COMPLETE:
-      update(action.id, {complete: true});
-      ClassStore.emitChange();
-      break;
-
-    case ClassConstants.TODO_UPDATE_TEXT:
-      text = action.text.trim();
-      if (text !== '') {
-        update(action.id, {text: text});
-        ClassStore.emitChange();
-      }
-      break;
-
-    case ClassConstants.TODO_DESTROY:
-      destroy(action.id);
-      ClassStore.emitChange();
-      break;
-
-    case ClassConstants.TODO_DESTROY_COMPLETED:
+    case ClassConstants.CLASS_DESTROY_COMPLETED:
       destroyCompleted();
       ClassStore.emitChange();
       break;

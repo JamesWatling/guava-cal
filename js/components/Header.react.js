@@ -1,21 +1,16 @@
 var React = require('react');
 var moment = require('moment');
-//var TodoStore = require('../stores/TodoStore');
+var CalendarActions = require('../actions/CalendarActions')
+var CalendarStore = require('../stores/CalendarStore');
 
 var Header = React.createClass({
 
     getInitialState: function() {
-        return {month: this.props.month};
+        return {month: CalendarStore.currentMonth()};
     },
 
     handleClick: function(event) {
-        curDate = moment(this.state.month, "MMM YYYY");
-        if(event.target.id === 'next'){
-            curDate = curDate.add(1, 'month');
-        }
-        else {
-            curDate = curDate.subtract(1, 'month');
-        }
+        CalendarActions.changeMonth(this.state.month, event.target.id);
         this.setState({month: curDate.format("MMM YYYY")});
     },
 

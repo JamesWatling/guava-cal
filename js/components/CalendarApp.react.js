@@ -8,24 +8,22 @@ var React = require('react');
 var sortBy = require('sort-by');
 
 var ClassStore = require('../stores/ClassStore');
+var CalendarStore = require('../stores/CalendarStore');
 
-/**
- * Retrieve the current TODO data from the ClassStore
- */
-function getCalState() {
-  return {
-      month: "Jan 2016",
-  };
+
+function getCalendarState() {
+    return {
+        month: CalendarStore.currentMonth()
+    }
 }
 
 var CalendarApp = React.createClass({
 
-  getDefaultProps: function() {
-    return { month: "Jan 2016" };
+  _onChange: function() {
+      this.setState(CalendarStore.currentMonth());
   },
-
   getInitialState: function() {
-    return getCalState();
+      return getCalendarState();
   },
 
   componentDidMount: function() {
@@ -36,25 +34,14 @@ var CalendarApp = React.createClass({
     ClassStore.removeChangeListener(this._onChange);
   },
 
-  /**
-   * @return {object}
-   */
   render: function() {
     return (
             <div>
-              <Calendar month={moment(this.props.month).format("MMM YYYY")} />
+              <Calendar month={moment(this.state.month).format("MMM YYYY")} />
               <Classes />
             </div>
     );
   },
-
-  /**
-   * Event handler for 'change' events coming from the ClassStore
-   */
-  _onChange: function() {
-    this.setState(getTodoState());
-  }
-
 });
 
 module.exports = CalendarApp;
